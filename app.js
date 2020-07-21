@@ -78,7 +78,7 @@ async function printWeather(){
     var actualWeather = await getCurrentWeather();
     
     if (prevWeather != actualWeather) {
-        lcd.println(getWeather(), 4);
+        lcd.println(actualWeather, 4);
         prevWeather = actualWeather;
     }
 }
