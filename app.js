@@ -9,7 +9,7 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function getSalutation() {
-    const currentHour = this.Moment().format("HH");
+    const currentHour = (moment(Date.now())).format("HH");
     if (currentHour == 0 || currentHour < 12) return "Buenos dias!"
     else if (currentHour <= 19) return "Buenas tardes!"
     else return "Buenas noches!"
