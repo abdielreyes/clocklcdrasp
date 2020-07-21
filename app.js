@@ -90,7 +90,7 @@ function printClock() {
 async function printWeather() {
     var actualWeather = await getCurrentWeather()
     if (prevWeather != actualWeather) {
-        clearLine(4)
+        clearLine(3)
         lcd.printLineSync(3, actualWeather);
         prevWeather = actualWeather;
     }
