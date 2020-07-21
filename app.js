@@ -1,12 +1,12 @@
-var LCD = require('lcdi2c');
+var LCD = require('raspberrypi-liquid-crystal');
 var moment = require('moment');
 var weather = require('weather-js');
 const COLS = 20;
 const ROWS = 4;
 var lcd = new LCD(1, 0x27, COLS, ROWS);
 
-lcd.on();
-lcd.clear();
+lcd.beginSync();
+
 moment.locale('es');
 const NAME = 'Abdiel'
 const CITY = 'Mexico City, MX'
@@ -16,7 +16,7 @@ var prevSalutation;
 var prevWeather;
 
 function clearLine(line) {
-    lcd.println(" ".repeat(COLS), line);
+    lcd.printLineSync(line, " ".repeat(COLS));
 }
 
 function capitalizeFirstLetter(string) {
@@ -59,11 +59,11 @@ async function initScreen() {
     prevHour = getHour()
     prevSalutation = getSalutation()
     prevWeather = await getCurrentWeather()
-    lcd.clear(); if( lcd.error )lcdErrorHandler( lcd.error );
-    lcd.println(prevSalutation, 1);if( lcd.error )lcdErrorHandler( lcd.error );
-    lcd.println(prevDate, 2);if( lcd.error )lcdErrorHandler( lcd.error );
-    lcd.println(prevHour, 3);if( lcd.error )lcdErrorHandler( lcd.error );
-    lcd.println(prevWeather, 4);if( lcd.error )lcdErrorHandler( lcd.error );
+    lcd.clear(); 
+    lcd.printLineSync(0,prevSalutation);
+    lcd.printLineSync(1, prevDate);
+    lcd.printLineSync(2, prevHour);
+    lcd.printLineSync(3, prevWeather,);
 }
 
 function printClock() {
@@ -71,18 +71,18 @@ function printClock() {
     var actualDate = getDate();
     var actualHour = getHour();
     if (prevSalutation != actualSalutation) {
-        clearLine(1);
-        lcd.println(actualSalutation, 1);if( lcd.error )lcdErrorHandler( lcd.error );
+        clearLine(0);
+        lcd.printLineSync(0,actualSalutation);
         prevSalutation = actualSalutation;
     }
     if (prevDate != actualDate) {
-        clearLine(2);
-        lcd.println(actualDate, 2);if( lcd.error )lcdErrorHandler( lcd.error );
+        clearLine(1);
+        lcd.printLineSync(1, actualDate);
         prevDate = actualDate;
     }
     if (prevHour != actualHour) {
-        clearLine(3);
-        lcd.println(actualHour, 3);if( lcd.error )lcdErrorHandler( lcd.error );
+        clearLine(2);
+        lcd.printLineSync(2, actualHour);
         prevHour = actualHour;
     }
 
@@ -91,7 +91,7 @@ async function printWeather() {
     var actualWeather = await getCurrentWeather()
     if (prevWeather != actualWeather) {
         clearLine(4)
-        lcd.println(actualWeather, 4);if( lcd.error )lcdErrorHandler( lcd.error );
+        lcd.printLineSync(3, actualWeather);
         prevWeather = actualWeather;
     }
 }
