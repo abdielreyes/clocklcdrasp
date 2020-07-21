@@ -63,7 +63,7 @@ async function initScreen() {
     prevHour = getHour()
     prevSalutation = getSalutation()
     prevWeather = await getCurrentWeather()
-    lcd.clear(); 
+    lcd.clearSync(); 
     lcd.printLineSync(0,prevSalutation);
     lcd.printLineSync(1, prevDate);
     lcd.printLineSync(2, prevHour);
