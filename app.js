@@ -2,7 +2,7 @@ var LCD = require('lcdi2c');
 var moment = require('moment');
 var lcd = new LCD(1, 0x27, 20, 4);
 
-lcd.off();
+lcd.on();
 moment.locale('es');
 
 function capitalizeFirstLetter(string) {
