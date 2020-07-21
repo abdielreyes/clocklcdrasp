@@ -25,19 +25,29 @@ function getHour(){
     return moment(Date.now()).format('h:mm a');
 }
 function getCurrentWeather(){
-    weather.find({search: CITY, degreeType: 'C'}, function(err, result) {
-        if(err) console.log(err);
-        var weather={
-            currentTemp : result.current.termperature,
-            skyCode : result.current.skycode
-        }
-        return `Temp: ${weather.currentTemp}, ${weather.skyCode}`;
-      });
+    return new Promise((resolve,reject)=>{
+        weather.find({search: CITY, degreeType: 'C'}, function(err, result) {
+            
+            if(err){
+                reject(err);
+            };
+            var weather={
+                currentTemp : result[0].current.termperature,
+                skyCode : result[0].current.skycode
+            }
+            
+            resolve(`Temp: ${weather.currentTemp}, ${weather.skyCode}`);
+          });
+    });
+    
 }
 var prevDate=getDate()
 var prevHour=getHour()
 var prevSalutation=getSalutation()
-var prevWeather=getCurrentWeather()
+var prevWeather='';
+getCurrentWeather().then((weather)=>{
+    prevWeather = weather;
+}).catch((err)=>{console.log(err)});
 function initScreen() {
     lcd.clear();
     lcd.println(prevSalutation, 1);
@@ -64,7 +74,10 @@ setInterval(() => {
     }
 }, 1000);
 setInterval(() => {
-    var actualWeather = getCurrentWeather();
+    var actualWeather='';
+    getCurrentWeather().then((weather)=>{
+        actualWeather = weather;
+    }).catch((err)=>{console.log(err)});
     if(prevWeather != actualWeather){
         lcd.println(getWeather(), 4);
         prevWeather = actualWeather;
