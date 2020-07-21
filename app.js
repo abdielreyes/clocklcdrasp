@@ -24,28 +24,31 @@ function getDate() {
 function getHour() {
     return moment(Date.now()).format('h:mm a');
 }
-async function getCurrentWeather() {
-
-    var w = await weather.find({ search: CITY, degreeType: 'C' }, function (err, result) {
-
-        if (err) {
-            reject(err);
-        };
-        var weather = {
-            currentTemp: result[0].current.termperature,
-            skyCode: result[0].current.skycode
-        }
-
-        return `Temp: ${weather.currentTemp}, ${weather.skyCode}`
-    });
-
-
+function getCurrentWeather() {
+    return new Promise((resolve,reject)=>{
+        weather.find({ search: CITY, degreeType: 'C' }, function (err, result) {  
+            if (err) {
+                resolve('Error al obtener clima')
+            };
+            
+            var weather = {
+                currentTemp: result[0].current.temperature,
+                skyText: result[0].current.skytext
+            }
+            
+            resolve(`Temp: ${weather.currentTemp}, ${weather.skyText}`)
+        });
+    })
 }
-var prevDate = getDate()
-var prevHour = getHour()
-var prevSalutation = getSalutation()
-var prevWeather = getCurrentWeather()
-function initScreen() {
+var prevDate;
+var prevHour;
+var prevSalutation;
+var prevWeather;
+async function initScreen() {
+    prevDate = getDate()
+    prevHour = getHour()
+    prevSalutation = getSalutation()
+    prevWeather = await getCurrentWeather()
     lcd.clear();
     lcd.println(prevSalutation, 1);
     lcd.println(prevDate, 2);
@@ -53,7 +56,8 @@ function initScreen() {
     lcd.println(prevWeather, 4);
 }
 initScreen();
-setInterval(() => {
+
+function printClock(){
     var actualSalutation = getSalutation();
     var actualDate = getDate();
     var actualHour = getHour();
@@ -69,12 +73,18 @@ setInterval(() => {
         lcd.println(actualHour, 3);
         prevHour = actualHour;
     }
-}, 1000);
-setInterval(() => {
-    var actualWeather = getCurrentWeather();
+}
+async function printWeather(){
+    var actualWeather = await getCurrentWeather();
     
     if (prevWeather != actualWeather) {
         lcd.println(getWeather(), 4);
         prevWeather = actualWeather;
     }
-}, 1800000);
+}
+setInterval(() => {
+    printClock();
+}, 1000);
+setInterval(() => {
+    printWeather();
+}, 5000);
