@@ -26,8 +26,8 @@ var prevSalutation=getSalutation()
 function initScreen() {
     lcd.clear();
     lcd.println(getSalutation(), 1);
-    lcd.println(fecha, 2);
-    lcd.println(hora, 3);
+    lcd.println(getDate(), 2);
+    lcd.println(getHour(), 3);
     lcd.println('                    ', 4);
 }
 initScreen();
