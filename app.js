@@ -5,7 +5,11 @@ const COLS = 20;
 const ROWS = 4;
 var lcd = new LCD(1, 0x27, COLS, ROWS);
 
-lcd.beginSync();
+try {
+    lcd.beginSync();
+  } catch (e) {
+    console.log(e);
+  }
 
 moment.locale('es');
 const NAME = 'Abdiel'
