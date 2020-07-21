@@ -6,6 +6,7 @@ const ROWS = 4;
 var lcd = new LCD(1, 0x27, COLS, ROWS);
 
 lcd.on();
+lcd.clear();
 moment.locale('es');
 const NAME = 'Abdiel'
 const CITY = 'Mexico City, MX'
