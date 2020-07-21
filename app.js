@@ -28,8 +28,8 @@ function getCurrentWeather(){
     weather.find({search: CITY, degreeType: 'C'}, function(err, result) {
         if(err) console.log(err);
         var weather={
-            currentTemp = result.current.termperature,
-            skyCode = result.current.skycode
+            currentTemp : result.current.termperature,
+            skyCode : result.current.skycode
         }
         return `Temp: ${weather.currentTemp}, ${weather.skyCode}`;
       });
