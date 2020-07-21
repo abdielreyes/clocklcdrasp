@@ -1,44 +1,72 @@
 var LCD = require('lcdi2c');
 var moment = require('moment');
+var weather = require('weather-js');
+
 var lcd = new LCD(1, 0x27, 20, 4);
 
 lcd.on();
 moment.locale('es');
+const NAME = 'Abdiel'
+const CITY = 'Ciudad de Mexico, MX'
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function getSalutation() {
     const currentHour = (moment(Date.now())).format("HH");
-    if (currentHour == 0 || currentHour < 12) return "Buenos dias!"
-    else if (currentHour <= 19) return "Buenas tardes!"
-    else return "Buenas noches!"
+    if (currentHour == 0 || currentHour < 12) return `Buenos dias ${NAME}!`
+    else if (currentHour <= 19) return `Buenas tardes ${NAME}!`
+    else return `Buenas noches ${NAME}!`
 }
 function getDate(){
-    return capitalizeFirstLetter(moment(Date.now()).format('dddd, DD MMMM yyyy'));
+    return capitalizeFirstLetter(moment(Date.now()).format('dddd DD/MM/YYYY'));
 }
 function getHour(){
     return moment(Date.now()).format('h:mm a');
 }
+function getCurrentWeather(){
+    weather.find({search: CITY, degreeType: 'C'}, function(err, result) {
+        if(err) console.log(err);
+        var weather={
+            currentTemp = result.current.termperature,
+            skyCode = result.current.skycode
+        }
+        return `Temp: ${weather.currentTemp}, ${weather.skyCode}`;
+      });
+}
 var prevDate=getDate()
 var prevHour=getHour()
 var prevSalutation=getSalutation()
+var prevWeather=getCurrentWeather()
 function initScreen() {
     lcd.clear();
-    lcd.println(getSalutation(), 1);
-    lcd.println(getDate(), 2);
-    lcd.println(getHour(), 3);
-    lcd.println('                    ', 4);
+    lcd.println(prevSalutation, 1);
+    lcd.println(prevDate, 2);
+    lcd.println(prevHour, 3);
+    lcd.println(prevWeather, 4);
 }
 initScreen();
 setInterval(() => {
-    if(prevSalutation != getSalutation()){
-        lcd.println(getSalutation(), 1);
+    var actualSalutation = getSalutation();
+    var actualDate = getDate();
+    var actualHour = getHour();
+    if(prevSalutation != actualSalutation){
+        lcd.println(actualSalutation, 1);
+        prevSalutation = actualSalutation;
     }
-    if(prevDate != getDate()){
-        lcd.println(getDate(), 2);
+    if(prevDate != actualDate){
+        lcd.println(actualDate, 2);
+        prevDate = actualDate;
     }
-    if(prevHour != getHour()){
-        lcd.println(getHour(), 3);
+    if(prevHour != actualHour){
+        lcd.println(actualHour, 3);
+        prevHour = actualHour;
     }
 }, 1000);
+setInterval(() => {
+    var actualWeather = getCurrentWeather();
+    if(prevWeather != actualWeather){
+        lcd.println(getWeather(), 4);
+        prevWeather = actualWeather;
+    }
+}, 1800000);
