@@ -13,7 +13,7 @@ try {
 
 moment.locale('es');
 const NAME = 'Abdiel'
-const CITY = 'Mexico City, MX'
+const CITY = 'Ciudad de Mexico, MX'
 var prevDate;
 var prevHour;
 var prevSalutation;
@@ -93,6 +93,7 @@ function printClock() {
 }
 async function printWeather() {
     var actualWeather = await getCurrentWeather()
+    console.log(actualWeather)
     if (prevWeather != actualWeather) {
         clearLine(3)
         lcd.printLineSync(3, actualWeather);
