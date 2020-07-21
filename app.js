@@ -39,17 +39,18 @@ function getCurrentWeather() {
             if (err) {
                 resolve('Error al obtener clima')
             }; 
-            console.log(result)
+            var res = result[0];
+            
             var weather = {
-                currentTemp: result[0].current.temperature,
-                skyText: result[0].current.skytext
+                currentTemp: res.current.temperature,
+                skyText: res.current.skytext
             }
             resolve(`Temp: ${weather.currentTemp}, ${weather.skyText}`)
         });
     })
 }
 function lcdErrorHandler( err ) {
-    console.log( 'Unable to print to LCD display on bus 1 at address 0x27' );
+    console.log( 'Unable to print to LCD display on bus 1 at address 0x27',err );
     //Disable further processing if application calls this recursively.
 };
 async function initScreen() {
@@ -83,6 +84,7 @@ function printClock() {
         lcd.println(actualHour, 3);if( lcd.error )lcdErrorHandler( lcd.error );
         prevHour = actualHour;
     }
+
 }
 async function printWeather() {
     var actualWeather = await getCurrentWeather()
@@ -98,4 +100,4 @@ setInterval(() => {
 }, 1000);
 setInterval(() => {
     printWeather();
-}, 10000);
+}, 5000);
